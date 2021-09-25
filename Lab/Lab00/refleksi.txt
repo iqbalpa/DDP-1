@@ -1,0 +1,14 @@
+saya merasa senang mengerjakan Lab00 ini karena saya
+jadi ingat waktu pertama kali belajar pemrograman kala itu
+
+a. saya tidak mengalami kendala maupun kesulitan saat 
+melakukan instalasi python, karena kebetulan saya
+sudah melakukan instalasi python saat mengikuti DDP0
+
+b. saya memberikan nilai 2 untuk kemampuan programming saya
+karena saya merasa sudah cukup paham untuk materi dasar python
+seperti yang diajarkan saat DDP0
+
+c. harapan saya untuk asdos (terutama asdos saya), semoga
+kedepannya bisa lebih banyak dan sering diskusi, baik mengenai
+mata kuliah DDP ataupun mengenai hal lainnya
