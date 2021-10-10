@@ -1,65 +1,5 @@
-import random
-def make_HTML_word(word, cnt, high, low):
-    '''
-    Make a word with a font size and a random color.
-    Font size is scaled between html_big and html_little (to be user set).
-    high and low represent the high and low counts in the document.
-    cnt is the count of the word. 
-    Required -- word (string) to be formatted
-             -- cnt (int) count of occurrences of word
-             -- high (int) highest word count in the document
-             -- low (int) lowest word count in the document
-    Return -- a string formatted for HTML that is scaled with respect to cnt
-    '''
-    html_big = 96
-    html_little = 14
-    if high != low:
-        ratio = (cnt-low)/float(high-low)
-    else:
-        ratio = 0
-    font_size = html_big*ratio + (1-ratio)*html_little
-    font_size = int(font_size)
-    rgb = (random.randint(0, 255), random.randint(
-        0, 255), random.randint(0, 255))
-    word_str = '<span style=\"color: rgb{}; font-size:{:s}px;\">{:s}</span>'
-    return word_str.format(rgb, str(font_size), word)
-def make_HTML_box(body):
-    '''
-    Take one long string of words and put them in an HTML box.
-    If desired, width, background color & border can be changed in the function
-    This function stuffs the "body" string into the the HTML formatting string.
-
-    Required -- body (string), a string of words
-    Return -- a string that specifies an HTML box containing the body
-    '''
-    box_str = """<div style=\"
-    width: 560px;
-    background-color: rgb(250,250,250);
-    border: 1px grey solid;
-    text-align: center\" >{:s}</div>
-    """
-    return box_str.format(body)
-def print_HTML_file(body, title):
-    '''
-    Create a standard html page (file) with titles, header etc.
-    and add the body (an html box) to that page. File created is title+'.html'
-    Required -- body (string), a string that specifies an HTML box
-    Return -- nothing
-    '''
-    fd = open(title+'.html', 'w')
-    the_str = """
-    <html> <head>
-    <title>"""+title+"""</title>
-    </head>
-
-    <body>
-    <h1>"""+title+'</h1>'+'\n'+body+'\n'+"""<hr>
-    </body> </html>
-    """
-    fd.write(the_str)
-    fd.close()
-
 #============================ MAIN PROGRAM =========================
+from html_functions import *
 import string
 
 print("""Program untuk membuat word cloud dari text file
@@ -113,22 +53,31 @@ for kata in list_kata_baru:
     else:
         dict_kata[kata] = 1
 
-sorted_dict_kata = dict(sorted(dict_kata.items(), key=lambda item: item[1], reverse=True))
-list_kata = list(sorted_dict_kata.keys())
-list_jumlah_kata = list(sorted_dict_kata.values())
+kata_alfabetis = dict(sorted(dict_kata.items(), reverse=True))
+sorted_kata = dict(sorted(kata_alfabetis.items(), key=lambda item: item[1], reverse=True))
+list_kata2 = list(sorted_kata.keys())
+list_jumlah_kata2 = list(sorted_kata.values())
 
 for i in range(0, 54, 4):
-    print(f"{list_jumlah_kata[i]:>4d}:{list_kata[i]:<14s}  {list_jumlah_kata[i+1]:>4d}:{list_kata[i+1]:<14s}  {list_jumlah_kata[i+2]:>4d}:{list_kata[i+2]:<14s}  {list_jumlah_kata[i+3]:>4d}:{list_kata[i+3]:<14s}")
+    print(f"{list_jumlah_kata2[i]:>4d}:{list_kata2[i]:<14s}  {list_jumlah_kata2[i+1]:>4d}:{list_kata2[i+1]:<14s}  {list_jumlah_kata2[i+2]:>4d}:{list_kata2[i+2]:<14s}  {list_jumlah_kata2[i+3]:>4d}:{list_kata2[i+3]:<14s}")
 
+words = {}
+for i in range(0, 56):
+    words.update({list_kata2[i]: list_jumlah_kata2[i]})
+new_words = dict(sorted(words.items()))
+alphabetical_words = list(new_words.keys())
+sum_of_words = list(new_words.values())
+
+#======================================== FUNCTIONS CALL =================================
 def main():
-    high_count = list_jumlah_kata[0]
-    low_count = list_jumlah_kata[55]
+    high_count = list_jumlah_kata2[0]
+    low_count = list_jumlah_kata2[55]
     body = ''
     for i in range(0, 56):
-        body = body + " " + make_HTML_word(list_kata[i], list_jumlah_kata[i], high_count, low_count)
+        body = body + " " + make_HTML_word(alphabetical_words[i], sum_of_words[i], high_count, low_count)
     box = make_HTML_box(body)  # creates HTML in a box
     # writes HTML to file name 'testFile.html'
-    print_HTML_file(box, 'testFile')
+    print_HTML_file(box, f'A Word Cloud of {nama_file}')
 main()
 
 print()
