@@ -1,5 +1,4 @@
 import random
-import world_clouds
 # Functions adapted from ProgrammingHistorian
 # http://niche.uwo.ca/programming-historian/index.php/Tag_clouds
 
