@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 MENIT_DALAM_JAM = 60
 MENIT_DALAM_HARI = 60 * 24
 HARI = [i * MENIT_DALAM_HARI for i in range(7)]
@@ -20,7 +22,7 @@ def time_converter(time):
     return f"{days[hari]:<8}{jam:02d}.{menit:02d}  "
 
 # daftar matkul yang disediakan
-matkul_tersedia = {nama for nama,start,end in MATKUL_TERSEDIA}
+matkul_tersedia = [nama for nama,start,end in MATKUL_TERSEDIA]
 jadwal = []
 
 cond = True
@@ -77,7 +79,7 @@ while cond:
             for j in range(i+1, len(jadwal)):
                 if (jadwal[i][1] <= jadwal[j][1] <= jadwal[i][2]):
                     temp = True
-                    indeks.append((i, j))
+                    indeks.append([i, j])
 
         # jika ada matkul yg bentrok
         if temp:
@@ -90,6 +92,8 @@ while cond:
 
     # jika perintah adalah lihat daftar matkul
     elif perintah == "4":
+        # mengurutkan jadwal berdasarkan start-time
+        jadwal = sorted(jadwal, key=itemgetter(1))
 
         # jika belum ada matkul yg ditambahkan
         if len(jadwal) == 0:
