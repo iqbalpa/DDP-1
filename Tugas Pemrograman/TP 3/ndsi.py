@@ -77,9 +77,12 @@ def count_words(filepath, stop_words):
     word_freq = {}
     infile = open(filepath, "r")
 
+    # belum handle buat ngilangin punctuation di awal dan akhir
+
     for baris in infile:
         words = baris.split()
         for word in words:
+            word = word.strip(string.punctuation)
             if (word not in string.punctuation) and (word not in stop_words):
                 if word not in word_freq:
                     word_freq[word] = 1
