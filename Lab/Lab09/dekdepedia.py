@@ -1,6 +1,3 @@
-# list untuk menampung nama product yang ada
-products_name = []
-
 def urutkan_produk(produk):
     return produk.get_name()
 
@@ -27,17 +24,16 @@ class Seller(User) :
         Constructor untuk class Seller
         """
         super().__init__(user_name, tipe)
-        self.pemasukan = 0
+        self.__pemasukan = 0
         self.list_barang_jual = []
-        self.products = []
 
     # method untuk mendapatkan pemasukan SELLER
     def get_pemasukan(self) : 
-        return self.pemasukan
+        return self.__pemasukan
 
     # method untuk menambah jumlah pemasukan sesuai dengan harga barang yang dibeli BUYER
     def set_pemasukan(self, produk) : 
-        self.pemasukan += produk.get_harga()
+        self.__pemasukan += produk.get_harga()
 
     # method untuk menambahkan produk
     def tambah_product(self, produk_baru) :
@@ -47,19 +43,18 @@ class Seller(User) :
         stok = int(produk_baru[2])
 
         # jika nama barang sudah pernah ditambahkan oleh SELLER
-        if nama in self.products:
-            print("Produk sudah pernah terdaftar")
+        try:
+            nama_barang = get_product(nama)
+            if nama == nama_barang.get_name():
+                print("Produk sudah pernah terdaftar")
 
         # jika barang belum pernah ditambahkan oleh SELLER
-        else:
+        except:
 
-            # produk akan ditambahkan ke list_barang_jual milik SELLER,
-            # self.products, dan products_name
+            # akan dibuat object produk dan ditambahkan ke list_product dan self.list_barang_jual
             produk = Product(nama, harga, stok, self.get_name())
             self.list_barang_jual.append(produk)
             list_product.append(produk)
-            self.products.append(nama)
-            products_name.append(nama)
 
     # method untuk melihat produk yang dijual
     def lihat_produk_jualan_saya(self) : 
@@ -134,41 +129,41 @@ class Buyer(User) :
     def beli_produk(self):
         nama_barang = input("Masukkan barang yang ingin dibeli : ")
 
+        # jika produk yang diinginkan BUYER ada
+        try:
+            produk = get_product(nama_barang)
+            if nama_barang == produk.get_name():
+
+                # jika saldo BUYER >= harga produk dan stok produk masih ada
+                if (self.saldo >= produk.get_harga()) and (produk.stok >= 1):
+                    print(f"Berhasil membeli {produk.get_name()} dari {produk.get_seller()}")
+
+                    # produk akan ditambahkan ke list_barang_beli milik BUYER
+                    self.list_barang_beli.append(produk)
+
+                    # saldo BUYER akan berkurang sebesar harga produk
+                    self.saldo -= produk.get_harga()
+
+                    # stok produk akan berkurang 1
+                    produk.stok -= 1
+
+                    # pemasukan SELLER yang menjual barang tsb akan bertambah sebesar harga produk
+                    for user in list_user:
+                        if user.get_name() == produk.get_seller():
+                            user.set_pemasukan(produk)
+
+                # jika stok produk tidak tersedia
+                elif produk.stok < 1:
+                    print("Maaf, stok produk telah habis.")
+
+                # jika saldo BUYER < harga produk
+                elif self.saldo < produk.get_harga():
+                    print(f"Maaf, saldo Anda tidak cukup untuk membeli {produk.get_name()}")
+        
         # jika produk yang diinginkan BUYER tidak ada
-        if nama_barang not in products_name:
+        except:
             print(f"Barang dengan nama {nama_barang} tidak ditemukan dalam Dekdepedia.")
 
-        # jika produk yang diinginkan BUYER ada
-        else:
-            for produk in list_product:
-                if nama_barang == produk.get_name():
-
-                    # jika saldo BUYER >= harga produk dan stok produk masih ada
-                    if (self.saldo >= produk.get_harga()) and (produk.stok >= 1):
-                        print(f"Berhasil membeli {produk.get_name()} dari {produk.get_seller()}")
-
-                        # produk akan ditambahkan ke list_barang_beli milik BUYER
-                        self.list_barang_beli.append(produk)
-
-                        # saldo BUYER akan berkurang sebesar harga produk
-                        self.saldo -= produk.get_harga()
-
-                        # stok produk akan berkurang 1
-                        produk.stok -= 1
-
-                        # pemasukan SELLER yang menjual barang tsb akan bertambah sebesar harga produk
-                        for user in list_user:
-                            if user.get_name() == produk.get_seller():
-                                user.set_pemasukan(produk)
-
-                    # jika stok produk tidak tersedia
-                    elif produk.stok < 1:
-                        print("Maaf, stok produk telah habis.")
-
-                    # jika saldo BUYER < harga produk
-                    elif self.saldo < produk.get_harga():
-                        print(f"Maaf, saldo Anda tidak cukup untuk membeli {produk.get_name()}")
-                    
     # method untuk melihat riwayat pembelian
     def riwayat_pembelian(self):
         print("Berikut merupakan barang yang saya beli")
@@ -293,10 +288,10 @@ def main():
 
                 # jika tipe user adalah SELLER
                 if tipe == "SELLER":
-                    uname = data_user[1]
 
                     # jika input user sesuai format (2 kata)
                     if len(data_user) == 2:
+                        uname = data_user[1]
 
                         # untuk mengecek apakah username sudah sesuai dengan ketentuan karakter
                         for elem in uname:
